@@ -13,12 +13,10 @@ A modern Android loan calculator application with amortization schedule, built w
 
 ## Screenshots
 
-The app follows a dark green financial theme with:
-- Dashboard with active loans summary
-- Available loan products with gradient cards
-- Loan application form with live calculation
-- Confirmation screen with full details
-- Success dialog after submission
+![Dashboard](screenshots/dashboard.jpeg)
+![Request Screen](screenshots/requestscreen.jpeg)
+![Details Screen](screenshots/details.jpeg)
+![History Screen](screenshots/history.jpeg)
 
 ## Tech Stack
 
