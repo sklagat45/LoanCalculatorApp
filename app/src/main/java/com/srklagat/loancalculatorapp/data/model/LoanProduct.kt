@@ -1,5 +1,8 @@
 package com.srklagat.loancalculatorapp.data.model
 
+import androidx.annotation.DrawableRes
+import com.srklagat.loancalculatorapp.R
+
 /**
  * Represents a loan product available for application.
  * Contains metadata about the loan type, interest rates, and limits.
@@ -12,7 +15,8 @@ data class LoanProduct(
     val maxAmount: Double,
     val minAmount: Double,
     val maxTenureMonths: Int,
-    val minTenureMonths: Int
+    val minTenureMonths: Int,
+    @param:DrawableRes val imageRes: Int
 ) {
     companion object {
         /**
@@ -27,7 +31,8 @@ data class LoanProduct(
                 maxAmount = 500000.0,
                 minAmount = 1000.0,
                 maxTenureMonths = 36,
-                minTenureMonths = 1
+                minTenureMonths = 1,
+                imageRes = R.drawable.loans
             ),
             LoanProduct(
                 id = "buy_now_pay_later",
@@ -37,7 +42,8 @@ data class LoanProduct(
                 maxAmount = 200000.0,
                 minAmount = 500.0,
                 maxTenureMonths = 12,
-                minTenureMonths = 1
+                minTenureMonths = 1,
+                imageRes = R.drawable.bnml
             ),
             LoanProduct(
                 id = "stock_loan",
@@ -47,7 +53,8 @@ data class LoanProduct(
                 maxAmount = 1000000.0,
                 minAmount = 5000.0,
                 maxTenureMonths = 60,
-                minTenureMonths = 3
+                minTenureMonths = 3,
+                imageRes = R.drawable.stock_finance
             )
         )
     }

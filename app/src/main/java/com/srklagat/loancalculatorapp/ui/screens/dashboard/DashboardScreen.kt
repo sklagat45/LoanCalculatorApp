@@ -118,6 +118,7 @@ fun DashboardScreen(
                     description = product.description,
                     gradientStart = start,
                     gradientEnd = end,
+                    imageRes = product.imageRes,
                     onClick = { onNavigateToApplyLoan(product.id) }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
