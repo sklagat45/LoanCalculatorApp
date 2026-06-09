@@ -13,10 +13,9 @@ A modern Android loan calculator application with amortization schedule, built w
 
 ## Screenshots
 
-![Dashboard](screenshots/dashboard.jpeg)
-![Request Screen](screenshots/requestscreen.jpeg)
-![Details Screen](screenshots/details.jpeg)
-![History Screen](screenshots/history.jpeg)
+| Dashboard | Request Screen | Details Screen | History Screen |
+|-----------|----------------|----------------|----------------|
+| ![Dashboard](screenshots/dashboard.jpeg) | ![Request Screen](screenshots/requestscreen.jpeg) | ![Details Screen](screenshots/details.jpeg) | ![History Screen](screenshots/history.jpeg) |
 
 ## Tech Stack
 
