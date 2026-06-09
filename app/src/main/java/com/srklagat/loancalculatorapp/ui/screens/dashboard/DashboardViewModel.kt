@@ -42,4 +42,8 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
             dao.delete(calculation)
         }
     }
+
+    fun hasExistingLoans(): Boolean {
+        return _savedCalculations.value.isNotEmpty()
+    }
 }

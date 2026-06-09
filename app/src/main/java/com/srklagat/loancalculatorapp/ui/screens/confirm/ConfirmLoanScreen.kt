@@ -172,6 +172,7 @@ fun ConfirmLoanScreen(
                 )
             }
         }
+        Spacer(modifier = Modifier.height(WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()))
     }
 }
 

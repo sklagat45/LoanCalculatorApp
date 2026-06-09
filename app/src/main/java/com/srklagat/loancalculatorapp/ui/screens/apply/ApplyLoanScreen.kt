@@ -59,17 +59,18 @@ fun ApplyLoanScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // Top bar
+        // 1. Fixed Top Bar
         LoanTopBar(
             title = "Apply Loan",
             onBackClick = onBackClick,
             onCloseClick = onCloseClick
         )
 
-        // Scrollable form content
+        // 2. Scrollable Form Content (Fills remaining space above the button)
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .weight(1f) // Takes available space, allowing the bottom button to stay pinned
+                .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp, vertical = 16.dp)
         ) {
@@ -341,10 +342,14 @@ fun ApplyLoanScreen(
                     }
                 }
             }
+        }
 
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Apply Loan button
+        // 3. Pinned Bottom Button Area (Stays static at the bottom of the screen)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+        ) {
             Button(
                 onClick = onApplyClick,
                 enabled = viewModel.isFormValid(),
@@ -365,7 +370,9 @@ fun ApplyLoanScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+
+            // Handles system navigation bar height spacing
+            Spacer(modifier = Modifier.height(WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()))
         }
     }
 }

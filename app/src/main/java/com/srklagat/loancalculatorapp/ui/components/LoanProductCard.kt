@@ -34,13 +34,14 @@ fun LoanProductCard(
     gradientEnd: Color,
     @DrawableRes imageRes: Int,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
             .height(160.dp)
-            .clickable(onClick = onClick),
+            .clickable(enabled = enabled, onClick = onClick),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -90,8 +91,8 @@ fun LoanProductCard(
                 // "Apply Now" button
                 Surface(
                     shape = RoundedCornerShape(20.dp),
-                    color = Color.White.copy(alpha = 0.25f),
-                    modifier = Modifier.clickable(onClick = onClick)
+                    color = if (enabled) Color.White.copy(alpha = 0.25f) else Color.White.copy(alpha = 0.1f),
+                    modifier = Modifier.clickable(enabled = enabled, onClick = onClick)
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),

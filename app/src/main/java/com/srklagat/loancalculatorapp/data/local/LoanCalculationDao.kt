@@ -31,4 +31,7 @@ interface LoanCalculationDao {
 
     @Query("SELECT * FROM loan_calculations ORDER BY createdAt DESC LIMIT 1")
     suspend fun getLatestCalculation(): LoanCalculationEntity?
+
+    @Query("SELECT COUNT(*) FROM loan_calculations")
+    suspend fun getLoanCount(): Int
 }

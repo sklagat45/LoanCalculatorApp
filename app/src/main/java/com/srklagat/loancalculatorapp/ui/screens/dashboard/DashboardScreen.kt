@@ -1,16 +1,17 @@
 package com.srklagat.loancalculatorapp.ui.screens.dashboard
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,10 +24,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.srklagat.loancalculatorapp.ui.components.ActiveLoanCard
 import com.srklagat.loancalculatorapp.ui.components.LoanProductCard
 import com.srklagat.loancalculatorapp.ui.theme.*
+import kotlinx.coroutines.delay
 
 /**
  * Dashboard/Home screen showing active loans and available loan products.
- * Matches the design with dark green header and gradient loan cards.
+ * Includes a custom top popup banner matching the exact design specification.
  */
 @Composable
 fun DashboardScreen(
@@ -38,93 +40,169 @@ fun DashboardScreen(
     val savedCalculations by viewModel.savedCalculations.collectAsState()
     val loanProducts by viewModel.loanProducts.collectAsState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        // Dark green header with greeting
-        DashboardHeader()
+    // State to control the popup banner visibility
+    var showInfoBanner by remember { mutableStateOf(false) }
 
-        // Scrollable content
+    // Auto-dismiss logic for the popup banner (acts like a snackbar)
+    LaunchedEffect(showInfoBanner) {
+        if (showInfoBanner) {
+            delay(4000) // Display for 4 seconds
+            showInfoBanner = false
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Main Screen Content
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp)
+                .background(MaterialTheme.colorScheme.background)
         ) {
-            Spacer(modifier = Modifier.height(20.dp))
+            // Dark green header with greeting
+            DashboardHeader()
 
-            // Active Loans section (saved calculations)
-            if (savedCalculations.isNotEmpty()) {
-                Text(
-                    text = "Active Loans",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
+            // Scrollable content
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp)
+            ) {
+                Spacer(modifier = Modifier.height(20.dp))
 
-                Spacer(modifier = Modifier.height(12.dp))
-
-                savedCalculations.forEach { calc ->
-                    ActiveLoanCard(
-                        loanType = calc.loanType,
-                        balance = calc.totalAmount,
-                        monthlyPayment = calc.monthlyEmi,
-                        interest = calc.totalInterest,
-                        onClick = { onNavigateToSavedLoan(calc.id) }
+                // Active Loans section (saved calculations)
+                if (savedCalculations.isNotEmpty()) {
+                    Text(
+                        text = "Active Loans",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
+
                     Spacer(modifier = Modifier.height(12.dp))
+
+                    savedCalculations.forEach { calc ->
+                        ActiveLoanCard(
+                            loanType = calc.loanType,
+                            balance = calc.totalAmount,
+                            monthlyPayment = calc.monthlyEmi,
+                            interest = calc.totalInterest,
+                            onClick = { onNavigateToSavedLoan(calc.id) }
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                        modifier = Modifier.padding(horizontal = 32.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = "Other Loans Available",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                } else {
+                    // No saved loans — show full available loans list
+                    Text(
+                        text = "Available Loans",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-                    modifier = Modifier.padding(horizontal = 32.dp)
-                )
-
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
-                    text = "Other Loans Available",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                // Loan product cards with gradients
+                val gradients = listOf(
+                    SalaryLoanStart to SalaryLoanEnd,
+                    BuyNowPayLaterStart to BuyNowPayLaterEnd,
+                    StockLoanStart to StockLoanEnd
                 )
-            } else {
-                // No saved loans — show full available loans list
-                Text(
-                    text = "Available Loans",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
+
+                loanProducts.forEachIndexed { index, product ->
+                    val (start, end) = gradients[index % gradients.size]
+                    LoanProductCard(
+                        name = product.name,
+                        description = product.description,
+                        gradientStart = start,
+                        gradientEnd = end,
+                        imageRes = product.imageRes,
+                        onClick = {
+                            if (savedCalculations.isNotEmpty()) {
+                                // Trigger the custom popup banner
+                                showInfoBanner = true
+                            } else {
+                                onNavigateToApplyLoan(product.id)
+                            }
+                        },
+                        enabled = true
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
             }
+        }
 
-            Spacer(modifier = Modifier.height(16.dp))
+        AnimatedVisibility(
+            visible = showInfoBanner,
+            enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
+            exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut(),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .statusBarsPadding() // Ensures it sits perfectly below or near the system status bar
+                .padding(horizontal = 16.dp, vertical = 10.dp)
+        ) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFFF4FBF7) // Precise matching soft light-green background
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+                    verticalAlignment = Alignment.Top
+                ) {
+                    // Green Information Icon
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = "Info Icon",
+                        tint = GreenText,
+                        modifier = Modifier
+                            .size(26.dp)
+                            .padding(top = 2.dp)
+                    )
 
-            // Loan product cards with gradients
-            val gradients = listOf(
-                SalaryLoanStart to SalaryLoanEnd,
-                BuyNowPayLaterStart to BuyNowPayLaterEnd,
-                StockLoanStart to StockLoanEnd
-            )
+                    Spacer(modifier = Modifier.width(14.dp))
 
-            loanProducts.forEachIndexed { index, product ->
-                val (start, end) = gradients[index % gradients.size]
-                LoanProductCard(
-                    name = product.name,
-                    description = product.description,
-                    gradientStart = start,
-                    gradientEnd = end,
-                    imageRes = product.imageRes,
-                    onClick = { onNavigateToApplyLoan(product.id) }
-                )
-                Spacer(modifier = Modifier.height(16.dp))
+                    Column {
+                        // Title
+                        Text(
+                            text = "Info",
+                            color = GreenText,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        // Message
+                        Text(
+                            text = "Please repay the current loan to apply for a new one.",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 13.sp,
+                            lineHeight = 18.sp
+                        )
+                    }
+                }
             }
-
-            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
