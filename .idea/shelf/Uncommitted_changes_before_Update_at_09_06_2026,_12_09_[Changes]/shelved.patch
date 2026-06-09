@@ -1,0 +1,268 @@
+Index: app/src/main/java/com/srklagat/loancalculatorapp/ui/screens/dashboard/DashboardScreen.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.srklagat.loancalculatorapp.ui.screens.dashboard\n\nimport androidx.compose.foundation.background\nimport androidx.compose.foundation.layout.*\nimport androidx.compose.foundation.rememberScrollState\nimport androidx.compose.foundation.shape.CircleShape\nimport androidx.compose.foundation.verticalScroll\nimport androidx.compose.material.icons.Icons\nimport androidx.compose.material.icons.filled.Person\nimport androidx.compose.material3.*\nimport androidx.compose.runtime.Composable\nimport androidx.compose.runtime.collectAsState\nimport androidx.compose.runtime.getValue\nimport androidx.compose.ui.Alignment\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.draw.clip\nimport androidx.compose.ui.graphics.Brush\nimport androidx.compose.ui.graphics.Color\nimport androidx.compose.ui.text.font.FontWeight\nimport androidx.compose.ui.unit.dp\nimport androidx.compose.ui.unit.sp\nimport androidx.lifecycle.viewmodel.compose.viewModel\nimport com.srklagat.loancalculatorapp.ui.components.ActiveLoanCard\nimport com.srklagat.loancalculatorapp.ui.components.InfoBanner\nimport com.srklagat.loancalculatorapp.ui.components.LoanProductCard\nimport com.srklagat.loancalculatorapp.ui.theme.*\n\n/**\n * Dashboard/Home screen showing active loans and available loan products.\n * Matches the design with dark green header and gradient loan cards.\n */\n@Composable\nfun DashboardScreen(\n    onNavigateToAvailableLoans: () -> Unit,\n    onNavigateToApplyLoan: (String) -> Unit,\n    onNavigateToSavedLoan: (Long) -> Unit,\n    viewModel: DashboardViewModel = viewModel()\n) {\n    val savedCalculations by viewModel.savedCalculations.collectAsState()\n    val loanProducts by viewModel.loanProducts.collectAsState()\n\n    Column(\n        modifier = Modifier\n            .fillMaxSize()\n            .background(MaterialTheme.colorScheme.background)\n    ) {\n        // Dark green header with greeting\n        DashboardHeader()\n\n        // Info banner when there are active loans\n        if (savedCalculations.isNotEmpty()) {\n            Spacer(modifier = Modifier.height(12.dp))\n            InfoBanner(\n                message = \"Please repay the current loan to apply for a new one.\"\n            )\n        }\n\n        // Scrollable content\n        Column(\n            modifier = Modifier\n                .fillMaxSize()\n                .verticalScroll(rememberScrollState())\n                .padding(horizontal = 16.dp)\n        ) {\n            Spacer(modifier = Modifier.height(20.dp))\n\n            // Active Loans section (saved calculations)\n            if (savedCalculations.isNotEmpty()) {\n                Text(\n                    text = \"Active Loans\",\n                    style = MaterialTheme.typography.titleMedium,\n                    color = MaterialTheme.colorScheme.onBackground,\n                    modifier = Modifier.align(Alignment.CenterHorizontally)\n                )\n\n                Spacer(modifier = Modifier.height(12.dp))\n\n                savedCalculations.forEach { calc ->\n                    ActiveLoanCard(\n                        loanType = calc.loanType,\n                        balance = calc.totalAmount,\n                        monthlyPayment = calc.monthlyEmi,\n                        interest = calc.totalInterest,\n                        onClick = { onNavigateToSavedLoan(calc.id) }\n                    )\n                    Spacer(modifier = Modifier.height(12.dp))\n                }\n\n                Spacer(modifier = Modifier.height(8.dp))\n\n                HorizontalDivider(\n                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),\n                    modifier = Modifier.padding(horizontal = 32.dp)\n                )\n\n                Spacer(modifier = Modifier.height(16.dp))\n\n                Text(\n                    text = \"Other Loans Available\",\n                    style = MaterialTheme.typography.titleMedium,\n                    color = MaterialTheme.colorScheme.onBackground,\n                    modifier = Modifier.align(Alignment.CenterHorizontally)\n                )\n            } else {\n                // No saved loans — show full available loans list\n                Text(\n                    text = \"Available Loans\",\n                    style = MaterialTheme.typography.titleMedium,\n                    color = MaterialTheme.colorScheme.onBackground,\n                    modifier = Modifier.align(Alignment.CenterHorizontally)\n                )\n            }\n\n            Spacer(modifier = Modifier.height(16.dp))\n\n            // Loan product cards with gradients\n            val gradients = listOf(\n                SalaryLoanStart to SalaryLoanEnd,\n                BuyNowPayLaterStart to BuyNowPayLaterEnd,\n                StockLoanStart to StockLoanEnd\n            )\n\n            loanProducts.forEachIndexed { index, product ->\n                val (start, end) = gradients[index % gradients.size]\n                LoanProductCard(\n                    name = product.name,\n                    description = product.description,\n                    gradientStart = start,\n                    gradientEnd = end,\n                    imageResId = product.imageResId,\n                    onClick = { onNavigateToApplyLoan(product.id) }\n                )\n                Spacer(modifier = Modifier.height(16.dp))\n            }\n\n            Spacer(modifier = Modifier.height(24.dp))\n        }\n    }\n}\n\n@Composable\nprivate fun DashboardHeader() {\n    Box(\n        modifier = Modifier\n            .fillMaxWidth()\n            .background(\n                brush = Brush.verticalGradient(\n                    colors = listOf(HeaderGradientStart, HeaderGradientEnd)\n                )\n            )\n            .statusBarsPadding()\n            .padding(horizontal = 20.dp, vertical = 20.dp)\n    ) {\n        Row(\n            verticalAlignment = Alignment.CenterVertically,\n            modifier = Modifier.fillMaxWidth()\n        ) {\n            // Profile avatar placeholder\n            Surface(\n                modifier = Modifier\n                    .size(50.dp)\n                    .clip(CircleShape),\n                color = Color.White.copy(alpha = 0.2f)\n            ) {\n                Icon(\n                    imageVector = Icons.Default.Person,\n                    contentDescription = \"Profile\",\n                    tint = Color.White,\n                    modifier = Modifier\n                        .padding(10.dp)\n                        .fillMaxSize()\n                )\n            }\n\n            Spacer(modifier = Modifier.width(16.dp))\n\n            Column {\n                Text(\n                    text = \"Hello There!\",\n                    color = Color.White,\n                    fontSize = 22.sp,\n                    fontWeight = FontWeight.Bold\n                )\n                Text(\n                    text = \"Boost your income today!\",\n                    color = Color.White.copy(alpha = 0.8f),\n                    fontSize = 13.sp\n                )\n            }\n        }\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/srklagat/loancalculatorapp/ui/screens/dashboard/DashboardScreen.kt b/app/src/main/java/com/srklagat/loancalculatorapp/ui/screens/dashboard/DashboardScreen.kt
+--- a/app/src/main/java/com/srklagat/loancalculatorapp/ui/screens/dashboard/DashboardScreen.kt	(revision 9070b4897cebf80acbd82221f622fcacfaef0664)
++++ b/app/src/main/java/com/srklagat/loancalculatorapp/ui/screens/dashboard/DashboardScreen.kt	(date 1780995166080)
+@@ -27,7 +27,6 @@
+ 
+ /**
+  * Dashboard/Home screen showing active loans and available loan products.
+- * Matches the design with dark green header and gradient loan cards.
+  */
+ @Composable
+ fun DashboardScreen(
+Index: app/src/main/java/com/srklagat/loancalculatorapp/ui/screens/apply/ApplyLoanScreen.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.srklagat.loancalculatorapp.ui.screens.apply\n\nimport androidx.compose.foundation.background\nimport androidx.compose.foundation.border\nimport androidx.compose.foundation.layout.*\nimport androidx.compose.foundation.rememberScrollState\nimport androidx.compose.foundation.shape.RoundedCornerShape\nimport androidx.compose.foundation.text.KeyboardOptions\nimport androidx.compose.foundation.verticalScroll\nimport androidx.compose.material3.*\nimport androidx.compose.runtime.*\nimport androidx.compose.ui.Alignment\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.graphics.Color\nimport androidx.compose.ui.text.font.FontWeight\nimport androidx.compose.ui.text.input.KeyboardType\nimport androidx.compose.ui.unit.dp\nimport androidx.compose.ui.unit.sp\nimport com.srklagat.loancalculatorapp.ui.components.LoanTopBar\nimport com.srklagat.loancalculatorapp.ui.theme.*\nimport java.text.NumberFormat\nimport java.text.SimpleDateFormat\nimport java.util.*\n\n/**\n * Apply Loan form screen matching the design.\n * Shows loan type, amount, period, calculated totals,\n * disbursement account, and repayment schedule preview.\n */\n@OptIn(ExperimentalMaterial3Api::class)\n@Composable\nfun ApplyLoanScreen(\n    viewModel: ApplyLoanViewModel,\n    onBackClick: () -> Unit,\n    onCloseClick: () -> Unit,\n    onApplyClick: () -> Unit\n) {\n    val selectedProduct by viewModel.selectedProduct.collectAsState()\n    val loanAmount by viewModel.loanAmount.collectAsState()\n    val loanPeriod by viewModel.loanPeriod.collectAsState()\n    val disbursementAccount by viewModel.disbursementAccount.collectAsState()\n    val calculationResult by viewModel.calculationResult.collectAsState()\n    val amountError by viewModel.amountError.collectAsState()\n\n    val formatter = remember {\n        NumberFormat.getNumberInstance(Locale.US).apply {\n            minimumFractionDigits = 2\n            maximumFractionDigits = 2\n        }\n    }\n\n    // Dropdown expanded states\n    var loanTypeExpanded by remember { mutableStateOf(false) }\n    var periodExpanded by remember { mutableStateOf(false) }\n    var accountExpanded by remember { mutableStateOf(false) }\n\n    Column(\n        modifier = Modifier\n            .fillMaxSize()\n            .background(MaterialTheme.colorScheme.background)\n    ) {\n        // Top bar\n        LoanTopBar(\n            title = \"Apply Loan\",\n            onBackClick = onBackClick,\n            onCloseClick = onCloseClick\n        )\n\n        // Scrollable form content\n        Column(\n            modifier = Modifier\n                .fillMaxSize()\n                .verticalScroll(rememberScrollState())\n                .padding(horizontal = 20.dp, vertical = 16.dp)\n        ) {\n            // Loan Type Dropdown\n            Text(\n                text = \"Loan Type\",\n                style = MaterialTheme.typography.bodyMedium,\n                color = MaterialTheme.colorScheme.onSurfaceVariant\n            )\n            Spacer(modifier = Modifier.height(6.dp))\n\n            ExposedDropdownMenuBox(\n                expanded = loanTypeExpanded,\n                onExpandedChange = { loanTypeExpanded = it }\n            ) {\n                OutlinedTextField(\n                    value = selectedProduct?.name ?: \"Select loan type\",\n                    onValueChange = {},\n                    readOnly = true,\n                    trailingIcon = {\n                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = loanTypeExpanded)\n                    },\n                    modifier = Modifier\n                        .fillMaxWidth()\n                        .menuAnchor(),\n                    shape = RoundedCornerShape(12.dp),\n                    colors = OutlinedTextFieldDefaults.colors(\n                        focusedBorderColor = PrimaryGreen,\n                        unfocusedBorderColor = MaterialTheme.colorScheme.outline\n                    )\n                )\n                ExposedDropdownMenu(\n                    expanded = loanTypeExpanded,\n                    onDismissRequest = { loanTypeExpanded = false }\n                ) {\n                    viewModel.loanProducts.forEach { product ->\n                        DropdownMenuItem(\n                            text = { Text(product.name) },\n                            onClick = {\n                                viewModel.selectProduct(product)\n                                loanTypeExpanded = false\n                            }\n                        )\n                    }\n                }\n            }\n\n            // Interest rate display\n            if (selectedProduct != null) {\n                Spacer(modifier = Modifier.height(4.dp))\n                Text(\n                    text = \"Interest: ${selectedProduct!!.annualInterestRate.toInt()}% p.a\",\n                    color = GreenText,\n                    fontSize = 13.sp,\n                    fontWeight = FontWeight.Medium\n                )\n            }\n\n            Spacer(modifier = Modifier.height(20.dp))\n\n            // Loan Amount\n            Text(\n                text = \"Loan Amount\",\n                style = MaterialTheme.typography.bodyMedium,\n                color = MaterialTheme.colorScheme.onSurfaceVariant\n            )\n            Spacer(modifier = Modifier.height(6.dp))\n\n            OutlinedTextField(\n                value = loanAmount,\n                onValueChange = { viewModel.updateLoanAmount(it) },\n                modifier = Modifier.fillMaxWidth(),\n                shape = RoundedCornerShape(12.dp),\n                leadingIcon = {\n                    Row(\n                        verticalAlignment = Alignment.CenterVertically,\n                        modifier = Modifier.padding(start = 12.dp)\n                    ) {\n                        Text(\n                            text = \"KES\",\n                            fontWeight = FontWeight.SemiBold,\n                            fontSize = 14.sp,\n                            color = MaterialTheme.colorScheme.onSurface\n                        )\n                        Spacer(modifier = Modifier.width(8.dp))\n                        Box(\n                            modifier = Modifier\n                                .height(24.dp)\n                                .width(1.dp)\n                                .background(MaterialTheme.colorScheme.outline)\n                        )\n                    }\n                },\n                placeholder = {\n                    Text(\"0.00\", color = MaterialTheme.colorScheme.onSurfaceVariant)\n                },\n                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),\n                isError = amountError != null,\n                supportingText = if (amountError != null) {\n                    { Text(amountError!!, color = ErrorRed) }\n                } else null,\n                colors = OutlinedTextFieldDefaults.colors(\n                    focusedBorderColor = PrimaryGreen,\n                    unfocusedBorderColor = MaterialTheme.colorScheme.outline\n                )\n            )\n\n            // Available Loan Limit\n            if (selectedProduct != null) {\n                Text(\n                    text = \"Available Loan Limit: ${formatter.format(selectedProduct!!.maxAmount)} KES\",\n                    color = GreenText,\n                    fontSize = 13.sp,\n                    fontWeight = FontWeight.Medium\n                )\n            }\n\n            Spacer(modifier = Modifier.height(20.dp))\n\n            // Loan Period\n            Text(\n                text = \"Loan Period (months)\",\n                style = MaterialTheme.typography.bodyMedium,\n                color = MaterialTheme.colorScheme.onSurfaceVariant\n            )\n            Spacer(modifier = Modifier.height(6.dp))\n\n            ExposedDropdownMenuBox(\n                expanded = periodExpanded,\n                onExpandedChange = { periodExpanded = it }\n            ) {\n                OutlinedTextField(\n                    value = loanPeriod.toString(),\n                    onValueChange = {},\n                    readOnly = true,\n                    trailingIcon = {\n                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = periodExpanded)\n                    },\n                    modifier = Modifier\n                        .fillMaxWidth()\n                        .menuAnchor(),\n                    shape = RoundedCornerShape(12.dp),\n                    colors = OutlinedTextFieldDefaults.colors(\n                        focusedBorderColor = PrimaryGreen,\n                        unfocusedBorderColor = MaterialTheme.colorScheme.outline\n                    )\n                )\n                ExposedDropdownMenu(\n                    expanded = periodExpanded,\n                    onDismissRequest = { periodExpanded = false }\n                ) {\n                    val maxMonths = selectedProduct?.maxTenureMonths ?: 36\n                    (1..maxMonths).forEach { month ->\n                        DropdownMenuItem(\n                            text = { Text(\"$month\") },\n                            onClick = {\n                                viewModel.updateLoanPeriod(month)\n                                periodExpanded = false\n                            }\n                        )\n                    }\n                }\n            }\n\n            // Total Amount Payable\n            if (calculationResult != null) {\n                Spacer(modifier = Modifier.height(6.dp))\n                Text(\n                    text = \"Total Amount Payable: ${formatter.format(calculationResult!!.totalAmount)} KES\",\n                    color = GreenText,\n                    fontSize = 13.sp,\n                    fontWeight = FontWeight.Medium\n                )\n            }\n\n            Spacer(modifier = Modifier.height(20.dp))\n\n            // Disbursement Account\n            Text(\n                text = \"Disbursement Account\",\n                style = MaterialTheme.typography.bodyMedium,\n                color = MaterialTheme.colorScheme.onSurfaceVariant\n            )\n            Spacer(modifier = Modifier.height(6.dp))\n\n            ExposedDropdownMenuBox(\n                expanded = accountExpanded,\n                onExpandedChange = { accountExpanded = it }\n            ) {\n                OutlinedTextField(\n                    value = disbursementAccount,\n                    onValueChange = {},\n                    readOnly = true,\n                    trailingIcon = {\n                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = accountExpanded)\n                    },\n                    modifier = Modifier\n                        .fillMaxWidth()\n                        .menuAnchor(),\n                    shape = RoundedCornerShape(12.dp),\n                    colors = OutlinedTextFieldDefaults.colors(\n                        focusedBorderColor = PrimaryGreen,\n                        unfocusedBorderColor = MaterialTheme.colorScheme.outline\n                    )\n                )\n                ExposedDropdownMenu(\n                    expanded = accountExpanded,\n                    onDismissRequest = { accountExpanded = false }\n                ) {\n                    viewModel.disbursementAccounts.forEach { account ->\n                        DropdownMenuItem(\n                            text = { Text(account) },\n                            onClick = {\n                                viewModel.updateDisbursementAccount(account)\n                                accountExpanded = false\n                            }\n                        )\n                    }\n                }\n            }\n\n            if (selectedProduct != null) {\n                Spacer(modifier = Modifier.height(4.dp))\n                Text(\n                    text = \"Available Loan Limit: ${formatter.format(selectedProduct!!.maxAmount)} KES\",\n                    color = GreenText,\n                    fontSize = 13.sp,\n                    fontWeight = FontWeight.Medium\n                )\n            }\n\n            // Repayment Schedule Preview\n            if (calculationResult != null) {\n                Spacer(modifier = Modifier.height(24.dp))\n\n                Text(\n                    text = \"Repayment Schedule\",\n                    style = MaterialTheme.typography.titleMedium,\n                    fontWeight = FontWeight.Bold,\n                    color = MaterialTheme.colorScheme.onBackground\n                )\n\n                Spacer(modifier = Modifier.height(12.dp))\n\n                val dateFormat = SimpleDateFormat(\"dd MMM yyyy\", Locale.ENGLISH)\n                val calendar = Calendar.getInstance()\n\n                calculationResult!!.schedule.forEach { entry ->\n                    calendar.add(Calendar.MONTH, if (entry.paymentNumber == 1) 1 else 1)\n                    val dateStr = dateFormat.format(calendar.time)\n\n                    Row(\n                        modifier = Modifier\n                            .fillMaxWidth()\n                            .padding(vertical = 6.dp),\n                        horizontalArrangement = Arrangement.SpaceBetween\n                    ) {\n                        Text(\n                            text = \"${getOrdinal(entry.paymentNumber)} instalment - $dateStr\",\n                            style = MaterialTheme.typography.bodyMedium,\n                            color = MaterialTheme.colorScheme.onSurface\n                        )\n                        Text(\n                            text = \"${formatter.format(entry.emi)} KES\",\n                            style = MaterialTheme.typography.bodyMedium,\n                            fontWeight = FontWeight.Bold,\n                            color = MaterialTheme.colorScheme.onSurface\n                        )\n                    }\n                }\n            }\n\n            Spacer(modifier = Modifier.height(32.dp))\n\n            // Apply Loan button\n            Button(\n                onClick = onApplyClick,\n                enabled = viewModel.isFormValid(),\n                modifier = Modifier\n                    .fillMaxWidth()\n                    .height(52.dp),\n                shape = RoundedCornerShape(12.dp),\n                colors = ButtonDefaults.buttonColors(\n                    containerColor = ButtonGreen,\n                    contentColor = Color.White,\n                    disabledContainerColor = ButtonGreen.copy(alpha = 0.4f)\n                )\n            ) {\n                Text(\n                    text = \"Apply Loan\",\n                    fontSize = 16.sp,\n                    fontWeight = FontWeight.SemiBold\n                )\n            }\n\n            Spacer(modifier = Modifier.height(24.dp))\n        }\n    }\n}\n\nprivate fun getOrdinal(n: Int): String {\n    return when {\n        n % 100 in 11..13 -> \"${n}th\"\n        n % 10 == 1 -> \"${n}st\"\n        n % 10 == 2 -> \"${n}nd\"\n        n % 10 == 3 -> \"${n}rd\"\n        else -> \"${n}th\"\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/srklagat/loancalculatorapp/ui/screens/apply/ApplyLoanScreen.kt b/app/src/main/java/com/srklagat/loancalculatorapp/ui/screens/apply/ApplyLoanScreen.kt
+--- a/app/src/main/java/com/srklagat/loancalculatorapp/ui/screens/apply/ApplyLoanScreen.kt	(revision 9070b4897cebf80acbd82221f622fcacfaef0664)
++++ b/app/src/main/java/com/srklagat/loancalculatorapp/ui/screens/apply/ApplyLoanScreen.kt	(date 1780995072487)
+@@ -23,7 +23,7 @@
+ import java.util.*
+ 
+ /**
+- * Apply Loan form screen matching the design.
++
+  * Shows loan type, amount, period, calculated totals,
+  * disbursement account, and repayment schedule preview.
+  */
+Index: build.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>// Top-level build file where you can add configuration options common to all sub-projects/modules.\nplugins {\n    alias(libs.plugins.android.application) apply false\n    alias(libs.plugins.kotlin.compose) apply false\n    id(\"org.jetbrains.kotlin.kapt\") version \"2.2.10\" apply false\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/build.gradle.kts b/build.gradle.kts
+--- a/build.gradle.kts	(revision 9070b4897cebf80acbd82221f622fcacfaef0664)
++++ b/build.gradle.kts	(date 1780994505134)
+@@ -2,5 +2,5 @@
+ plugins {
+     alias(libs.plugins.android.application) apply false
+     alias(libs.plugins.kotlin.compose) apply false
+-    id("org.jetbrains.kotlin.kapt") version "2.2.10" apply false
++    alias(libs.plugins.ksp) apply false
+ }
+\ No newline at end of file
+Index: gradle/libs.versions.toml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>[versions]\nagp = \"9.2.1\"\ncoreKtx = \"1.15.0\"\njunit = \"4.13.2\"\njunitVersion = \"1.1.5\"\nespressoCore = \"3.5.1\"\nlifecycleRuntimeKtx = \"2.8.7\"\nactivityCompose = \"1.9.3\"\nkotlin = \"2.2.10\"\ncomposeBom = \"2024.12.01\"\nroom = \"2.6.1\"\nnavigationCompose = \"2.8.5\"\ngson = \"2.10.1\"\nlifecycleViewmodelCompose = \"2.8.7\"\ncoroutinesTest = \"1.9.0\"\narchCoreTesting = \"2.2.0\"\nmockito = \"5.14.1\"\nmockitoKotlin = \"5.4.0\"\nroomTesting = \"2.6.1\"\n\n[libraries]\nandroidx-core-ktx = { group = \"androidx.core\", name = \"core-ktx\", version.ref = \"coreKtx\" }\njunit = { group = \"junit\", name = \"junit\", version.ref = \"junit\" }\nandroidx-junit = { group = \"androidx.test.ext\", name = \"junit\", version.ref = \"junitVersion\" }\nandroidx-espresso-core = { group = \"androidx.test.espresso\", name = \"espresso-core\", version.ref = \"espressoCore\" }\nandroidx-lifecycle-runtime-ktx = { group = \"androidx.lifecycle\", name = \"lifecycle-runtime-ktx\", version.ref = \"lifecycleRuntimeKtx\" }\nandroidx-activity-compose = { group = \"androidx.activity\", name = \"activity-compose\", version.ref = \"activityCompose\" }\nandroidx-compose-bom = { group = \"androidx.compose\", name = \"compose-bom\", version.ref = \"composeBom\" }\nandroidx-compose-ui = { group = \"androidx.compose.ui\", name = \"ui\" }\nandroidx-compose-ui-graphics = { group = \"androidx.compose.ui\", name = \"ui-graphics\" }\nandroidx-compose-ui-tooling = { group = \"androidx.compose.ui\", name = \"ui-tooling\" }\nandroidx-compose-ui-tooling-preview = { group = \"androidx.compose.ui\", name = \"ui-tooling-preview\" }\nandroidx-compose-ui-test-manifest = { group = \"androidx.compose.ui\", name = \"ui-test-manifest\" }\nandroidx-compose-ui-test-junit4 = { group = \"androidx.compose.ui\", name = \"ui-test-junit4\" }\nandroidx-compose-material3 = { group = \"androidx.compose.material3\", name = \"material3\" }\n# Room\nandroidx-room-runtime = { group = \"androidx.room\", name = \"room-runtime\", version.ref = \"room\" }\nandroidx-room-compiler = { group = \"androidx.room\", name = \"room-compiler\", version.ref = \"room\" }\nandroidx-room-ktx = { group = \"androidx.room\", name = \"room-ktx\", version.ref = \"room\" }\n# Navigation\nandroidx-navigation-compose = { group = \"androidx.navigation\", name = \"navigation-compose\", version.ref = \"navigationCompose\" }\n# Lifecycle ViewModel Compose\nandroidx-lifecycle-viewmodel-compose = { group = \"androidx.lifecycle\", name = \"lifecycle-viewmodel-compose\", version.ref = \"lifecycleViewmodelCompose\" }\n# Gson\ngson = { group = \"com.google.code.gson\", name = \"gson\", version.ref = \"gson\" }\n# Material Icons Extended\nandroidx-compose-material-icons-extended = { group = \"androidx.compose.material\", name = \"material-icons-extended\" }\n# Testing\nkotlinx-coroutines-test = { group = \"org.jetbrains.kotlinx\", name = \"kotlinx-coroutines-test\", version.ref = \"coroutinesTest\" }\nandroidx-arch-core-testing = { group = \"androidx.arch.core\", name = \"core-testing\", version.ref = \"archCoreTesting\" }\nmockito-core = { group = \"org.mockito\", name = \"mockito-core\", version.ref = \"mockito\" }\nmockito-kotlin = { group = \"org.mockito.kotlin\", name = \"mockito-kotlin\", version.ref = \"mockitoKotlin\" }\nandroidx-room-testing = { group = \"androidx.room\", name = \"room-testing\", version.ref = \"roomTesting\" }\n\n[plugins]\nandroid-application = { id = \"com.android.application\", version.ref = \"agp\" }\nkotlin-compose = { id = \"org.jetbrains.kotlin.plugin.compose\", version.ref = \"kotlin\" }\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/gradle/libs.versions.toml b/gradle/libs.versions.toml
+--- a/gradle/libs.versions.toml	(revision 9070b4897cebf80acbd82221f622fcacfaef0664)
++++ b/gradle/libs.versions.toml	(date 1780994502697)
+@@ -17,6 +17,7 @@
+ mockito = "5.14.1"
+ mockitoKotlin = "5.4.0"
+ roomTesting = "2.6.1"
++ksp = "2.2.21-2.0.5"
+ 
+ [libraries]
+ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+@@ -55,3 +56,4 @@
+ [plugins]
+ android-application = { id = "com.android.application", version.ref = "agp" }
+ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
++ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+Index: app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n<adaptive-icon xmlns:android=\"http://schemas.android.com/apk/res/android\">\n    <background android:drawable=\"@drawable/ic_launcher_background\" />\n    <foreground android:drawable=\"@drawable/ic_launcher_foreground\" />\n    <monochrome android:drawable=\"@drawable/ic_launcher_foreground\" />\n</adaptive-icon>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml b/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+--- a/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml	(revision 9070b4897cebf80acbd82221f622fcacfaef0664)
++++ b/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml	(date 1780995584513)
+@@ -1,6 +1,21 @@
++<!--
++  ~ Copyright (C) 2026 The Android Open Source Project
++  ~
++  ~ Licensed under the Apache License, Version 2.0 (the "License");
++  ~ you may not use this file except in compliance with the License.
++  ~ You may obtain a copy of the License at
++  ~
++  ~      http://www.apache.org/licenses/LICENSE-2.0
++  ~
++  ~ Unless required by applicable law or agreed to in writing, software
++  ~ distributed under the License is distributed on an "AS IS" BASIS,
++  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++  ~ See the License for the specific language governing permissions and
++  ~ limitations under the License.
++  -->
+ <?xml version="1.0" encoding="utf-8"?>
+ <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+-    <background android:drawable="@drawable/ic_launcher_background" />
+-    <foreground android:drawable="@drawable/ic_launcher_foreground" />
+-    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
++    <background android:drawable="@color/ic_launcher_background"/>
++    <foreground android:drawable="@drawable/ic_launcher_foreground"/>
++    <monochrome android:drawable="@drawable/ic_launcher_foreground"/>
+ </adaptive-icon>
+\ No newline at end of file
+Index: gradle.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+># Project-wide Gradle settings.\n# IDE (e.g. Android Studio) users:\n# Gradle settings configured through the IDE *will override*\n# any settings specified in this file.\n# For more details on how to configure your build environment visit\n# http://www.gradle.org/docs/current/userguide/build_environment.html\n# Specifies the JVM arguments used for the daemon process.\n# The setting is particularly useful for tweaking memory settings.\norg.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8\n# When configured, Gradle will run in incubating parallel mode.\n# This option should only be used with decoupled projects. For more details, visit\n# https://developer.android.com/r/tools/gradle-multi-project-decoupled-projects\n# org.gradle.parallel=true\n# When enabled, the Configuration Cache allows Gradle to skip the configuration\n# phase entirely if nothing that affects the build configuration (such as build scripts)\n# has changed. Additionally, Gradle applies performance optimizations to task execution.\norg.gradle.configuration-cache=true\n# Kotlin code style for this project: \"official\" or \"obsolete\":\nkotlin.code.style=official\n\n# Disable built-in Kotlin to use KAPT\nandroid.builtInKotlin=false\nandroid.newDsl=false
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/gradle.properties b/gradle.properties
+--- a/gradle.properties	(revision 9070b4897cebf80acbd82221f622fcacfaef0664)
++++ b/gradle.properties	(date 1780994761836)
+@@ -18,6 +18,6 @@
+ # Kotlin code style for this project: "official" or "obsolete":
+ kotlin.code.style=official
+ 
+-# Disable built-in Kotlin to use KAPT
+-android.builtInKotlin=false
+-android.newDsl=false
+\ No newline at end of file
++# KSP with built-in Kotlin support
++android.disallowKotlinSourceSets=false
++android.builtInKotlin=false
+\ No newline at end of file
+Index: app/src/main/res/drawable/ic_launcher_foreground.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><vector xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:aapt=\"http://schemas.android.com/aapt\"\n    android:width=\"108dp\"\n    android:height=\"108dp\"\n    android:viewportWidth=\"108\"\n    android:viewportHeight=\"108\">\n    <path android:pathData=\"M31,63.928c0,0 6.4,-11 12.1,-13.1c7.2,-2.6 26,-1.4 26,-1.4l38.1,38.1L107,108.928l-32,-1L31,63.928z\">\n        <aapt:attr name=\"android:fillColor\">\n            <gradient\n                android:endX=\"85.84757\"\n                android:endY=\"92.4963\"\n                android:startX=\"42.9492\"\n                android:startY=\"49.59793\"\n                android:type=\"linear\">\n                <item\n                    android:color=\"#44000000\"\n                    android:offset=\"0.0\" />\n                <item\n                    android:color=\"#00000000\"\n                    android:offset=\"1.0\" />\n            </gradient>\n        </aapt:attr>\n    </path>\n    <path\n        android:fillColor=\"#FFFFFF\"\n        android:fillType=\"nonZero\"\n        android:pathData=\"M65.3,45.828l3.8,-6.6c0.2,-0.4 0.1,-0.9 -0.3,-1.1c-0.4,-0.2 -0.9,-0.1 -1.1,0.3l-3.9,6.7c-6.3,-2.8 -13.4,-2.8 -19.7,0l-3.9,-6.7c-0.2,-0.4 -0.7,-0.5 -1.1,-0.3C38.8,38.328 38.7,38.828 38.9,39.228l3.8,6.6C36.2,49.428 31.7,56.028 31,63.928h46C76.3,56.028 71.8,49.428 65.3,45.828zM43.4,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2c-0.3,-0.7 -0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C45.3,56.528 44.5,57.328 43.4,57.328L43.4,57.328zM64.6,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2s-0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C66.5,56.528 65.6,57.328 64.6,57.328L64.6,57.328z\"\n        android:strokeWidth=\"1\"\n        android:strokeColor=\"#00000000\" />\n</vector>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_launcher_foreground.xml b/app/src/main/res/drawable/ic_launcher_foreground.xml
+--- a/app/src/main/res/drawable/ic_launcher_foreground.xml	(revision 9070b4897cebf80acbd82221f622fcacfaef0664)
++++ b/app/src/main/res/drawable/ic_launcher_foreground.xml	(date 1780995584677)
+@@ -1,30 +1,30 @@
++<!--
++  ~ Copyright (C) 2026 The Android Open Source Project
++  ~
++  ~ Licensed under the Apache License, Version 2.0 (the "License");
++  ~ you may not use this file except in compliance with the License.
++  ~ You may obtain a copy of the License at
++  ~
++  ~      http://www.apache.org/licenses/LICENSE-2.0
++  ~
++  ~ Unless required by applicable law or agreed to in writing, software
++  ~ distributed under the License is distributed on an "AS IS" BASIS,
++  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++  ~ See the License for the specific language governing permissions and
++  ~ limitations under the License.
++  -->
+ <vector xmlns:android="http://schemas.android.com/apk/res/android"
+-    xmlns:aapt="http://schemas.android.com/aapt"
+     android:width="108dp"
+     android:height="108dp"
+-    android:viewportWidth="108"
+-    android:viewportHeight="108">
+-    <path android:pathData="M31,63.928c0,0 6.4,-11 12.1,-13.1c7.2,-2.6 26,-1.4 26,-1.4l38.1,38.1L107,108.928l-32,-1L31,63.928z">
+-        <aapt:attr name="android:fillColor">
+-            <gradient
+-                android:endX="85.84757"
+-                android:endY="92.4963"
+-                android:startX="42.9492"
+-                android:startY="49.59793"
+-                android:type="linear">
+-                <item
+-                    android:color="#44000000"
+-                    android:offset="0.0" />
+-                <item
+-                    android:color="#00000000"
+-                    android:offset="1.0" />
+-            </gradient>
+-        </aapt:attr>
+-    </path>
++    android:viewportWidth="960"
++    android:viewportHeight="960"
++    android:tint="#000000">
++  <group android:scaleX="0.58"
++      android:scaleY="0.58"
++      android:translateX="201.6"
++      android:translateY="201.6">
+     <path
+-        android:fillColor="#FFFFFF"
+-        android:fillType="nonZero"
+-        android:pathData="M65.3,45.828l3.8,-6.6c0.2,-0.4 0.1,-0.9 -0.3,-1.1c-0.4,-0.2 -0.9,-0.1 -1.1,0.3l-3.9,6.7c-6.3,-2.8 -13.4,-2.8 -19.7,0l-3.9,-6.7c-0.2,-0.4 -0.7,-0.5 -1.1,-0.3C38.8,38.328 38.7,38.828 38.9,39.228l3.8,6.6C36.2,49.428 31.7,56.028 31,63.928h46C76.3,56.028 71.8,49.428 65.3,45.828zM43.4,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2c-0.3,-0.7 -0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C45.3,56.528 44.5,57.328 43.4,57.328L43.4,57.328zM64.6,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2s-0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C66.5,56.528 65.6,57.328 64.6,57.328L64.6,57.328z"
+-        android:strokeWidth="1"
+-        android:strokeColor="#00000000" />
+-</vector>
+\ No newline at end of file
++        android:fillColor="@android:color/white"
++        android:pathData="M441,840L441,754Q388,742 349.5,708Q311,674 293,612L367,582Q382,630 411.5,655Q441,680 489,680Q530,680 558.5,661.5Q587,643 587,604Q587,569 565,548.5Q543,528 463,502Q377,475 345,437.5Q313,400 313,346Q313,281 355,245Q397,209 441,204L441,120L521,120L521,204Q571,212 603.5,240.5Q636,269 651,310L577,342Q565,310 543,294Q521,278 483,278Q439,278 416,297.5Q393,317 393,346Q393,379 423,398Q453,417 527,438Q596,458 631.5,501.5Q667,545 667,602Q667,673 625,710Q583,747 521,756L521,840L441,840Z"/>
++  </group>
++</vector>
+Index: app/build.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\n    alias(libs.plugins.android.application)\n    alias(libs.plugins.kotlin.compose)\n    kotlin(\"kapt\")\n}\n\nandroid {\n    namespace = \"com.srklagat.loancalculatorapp\"\n    compileSdk = 36\n\n    defaultConfig {\n        applicationId = \"com.srklagat.loancalculatorapp\"\n        minSdk = 24\n        targetSdk = 36\n        versionCode = 1\n        versionName = \"1.0\"\n\n        testInstrumentationRunner = \"androidx.test.runner.AndroidJUnitRunner\"\n    }\n\n    buildTypes {\n        release {\n            isMinifyEnabled = false\n            proguardFiles(\n                getDefaultProguardFile(\"proguard-android-optimize.txt\"),\n                \"proguard-rules.pro\"\n            )\n        }\n    }\n    compileOptions {\n        sourceCompatibility = JavaVersion.VERSION_11\n        targetCompatibility = JavaVersion.VERSION_11\n    }\n    buildFeatures {\n        compose = true\n    }\n}\n\ndependencies {\n    // Compose BOM\n    implementation(platform(libs.androidx.compose.bom))\n    implementation(libs.androidx.activity.compose)\n    implementation(libs.androidx.compose.material3)\n    implementation(libs.androidx.compose.ui)\n    implementation(libs.androidx.compose.ui.graphics)\n    implementation(libs.androidx.compose.ui.tooling.preview)\n    implementation(libs.androidx.compose.material.icons.extended)\n\n    // AndroidX Core\n    implementation(libs.androidx.core.ktx)\n    implementation(libs.androidx.lifecycle.runtime.ktx)\n    implementation(libs.androidx.lifecycle.viewmodel.compose)\n\n    // Navigation\n    implementation(libs.androidx.navigation.compose)\n\n    // Room\n    implementation(libs.androidx.room.runtime)\n    implementation(libs.androidx.room.ktx)\n    kapt(libs.androidx.room.compiler)\n\n    // Gson\n    implementation(libs.gson)\n\n    // Testing\n    testImplementation(libs.junit)\n    testImplementation(libs.kotlinx.coroutines.test)\n    testImplementation(libs.androidx.arch.core.testing)\n    testImplementation(libs.mockito.core)\n    testImplementation(libs.mockito.kotlin)\n\n    androidTestImplementation(platform(libs.androidx.compose.bom))\n    androidTestImplementation(libs.androidx.compose.ui.test.junit4)\n    androidTestImplementation(libs.androidx.espresso.core)\n    androidTestImplementation(libs.androidx.junit)\n    androidTestImplementation(libs.androidx.room.testing)\n    androidTestImplementation(libs.kotlinx.coroutines.test)\n\n    debugImplementation(libs.androidx.compose.ui.test.manifest)\n    debugImplementation(libs.androidx.compose.ui.tooling)\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle.kts b/app/build.gradle.kts
+--- a/app/build.gradle.kts	(revision 9070b4897cebf80acbd82221f622fcacfaef0664)
++++ b/app/build.gradle.kts	(date 1780994509363)
+@@ -1,7 +1,7 @@
+ plugins {
+     alias(libs.plugins.android.application)
+     alias(libs.plugins.kotlin.compose)
+-    kotlin("kapt")
++    alias(libs.plugins.ksp)
+ }
+ 
+ android {
+@@ -57,7 +57,7 @@
+     // Room
+     implementation(libs.androidx.room.runtime)
+     implementation(libs.androidx.room.ktx)
+-    kapt(libs.androidx.room.compiler)
++    ksp(libs.androidx.room.compiler)
+ 
+     // Gson
+     implementation(libs.gson)
+Index: app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n<adaptive-icon xmlns:android=\"http://schemas.android.com/apk/res/android\">\n    <background android:drawable=\"@drawable/ic_launcher_background\" />\n    <foreground android:drawable=\"@drawable/ic_launcher_foreground\" />\n    <monochrome android:drawable=\"@drawable/ic_launcher_foreground\" />\n</adaptive-icon>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml b/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+--- a/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml	(revision 9070b4897cebf80acbd82221f622fcacfaef0664)
++++ b/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml	(date 1780995584326)
+@@ -1,6 +1,21 @@
++<!--
++  ~ Copyright (C) 2026 The Android Open Source Project
++  ~
++  ~ Licensed under the Apache License, Version 2.0 (the "License");
++  ~ you may not use this file except in compliance with the License.
++  ~ You may obtain a copy of the License at
++  ~
++  ~      http://www.apache.org/licenses/LICENSE-2.0
++  ~
++  ~ Unless required by applicable law or agreed to in writing, software
++  ~ distributed under the License is distributed on an "AS IS" BASIS,
++  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++  ~ See the License for the specific language governing permissions and
++  ~ limitations under the License.
++  -->
+ <?xml version="1.0" encoding="utf-8"?>
+ <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+-    <background android:drawable="@drawable/ic_launcher_background" />
+-    <foreground android:drawable="@drawable/ic_launcher_foreground" />
+-    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
++    <background android:drawable="@color/ic_launcher_background"/>
++    <foreground android:drawable="@drawable/ic_launcher_foreground"/>
++    <monochrome android:drawable="@drawable/ic_launcher_foreground"/>
+ </adaptive-icon>
+\ No newline at end of file

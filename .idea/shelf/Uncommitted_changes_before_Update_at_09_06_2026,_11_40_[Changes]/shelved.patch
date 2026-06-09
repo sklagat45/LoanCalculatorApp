@@ -1,0 +1,221 @@
+Index: .idea/markdown.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/markdown.xml b/.idea/markdown.xml
+new file mode 100644
+--- /dev/null	(date 1780993624531)
++++ b/.idea/markdown.xml	(date 1780993624531)
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="MarkdownSettings">
++    <option name="previewPanelProviderInfo">
++      <ProviderInfo name="Compose (experimental)" className="com.intellij.markdown.compose.preview.ComposePanelProvider" />
++    </option>
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/gradle.xml b/.idea/gradle.xml
+new file mode 100644
+--- /dev/null	(date 1780993624458)
++++ b/.idea/gradle.xml	(date 1780993624458)
+@@ -0,0 +1,18 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="GradleSettings">
++    <option name="linkedExternalProjectsSettings">
++      <GradleProjectSettings>
++        <option name="testRunner" value="CHOOSE_PER_TEST" />
++        <option name="externalProjectPath" value="$PROJECT_DIR$" />
++        <option name="modules">
++          <set>
++            <option value="$PROJECT_DIR$" />
++            <option value="$PROJECT_DIR$/app" />
++          </set>
++        </option>
++        <option name="myGradleHome" value="/usr/local/Cellar/gradle/8.13/libexec" />
++      </GradleProjectSettings>
++    </option>
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/runConfigurations.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/runConfigurations.xml b/.idea/runConfigurations.xml
+new file mode 100644
+--- /dev/null	(date 1780993624622)
++++ b/.idea/runConfigurations.xml	(date 1780993624622)
+@@ -0,0 +1,17 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="RunConfigurationProducerService">
++    <option name="ignoredProducers">
++      <set>
++        <option value="com.intellij.execution.junit.AbstractAllInDirectoryConfigurationProducer" />
++        <option value="com.intellij.execution.junit.AllInPackageConfigurationProducer" />
++        <option value="com.intellij.execution.junit.PatternConfigurationProducer" />
++        <option value="com.intellij.execution.junit.TestInClassConfigurationProducer" />
++        <option value="com.intellij.execution.junit.UniqueIdConfigurationProducer" />
++        <option value="com.intellij.execution.junit.testDiscovery.JUnitTestDiscoveryConfigurationProducer" />
++        <option value="org.jetbrains.kotlin.idea.junit.KotlinJUnitRunConfigurationProducer" />
++        <option value="org.jetbrains.kotlin.idea.junit.KotlinPatternConfigurationProducer" />
++      </set>
++    </option>
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/AndroidProjectSystem.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/AndroidProjectSystem.xml b/.idea/AndroidProjectSystem.xml
+new file mode 100644
+--- /dev/null	(date 1780993624025)
++++ b/.idea/AndroidProjectSystem.xml	(date 1780993624025)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="AndroidProjectSystem">
++    <option name="providerId" value="com.android.tools.idea.GradleProjectSystem" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/compiler.xml b/.idea/compiler.xml
+new file mode 100644
+--- /dev/null	(date 1780993624137)
++++ b/.idea/compiler.xml	(date 1780993624137)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="CompilerConfiguration">
++    <bytecodeTargetLevel target="21" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/vcs.xml b/.idea/vcs.xml
+new file mode 100644
+--- /dev/null	(date 1780993624130)
++++ b/.idea/vcs.xml	(date 1780993624130)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="VcsDirectoryMappings">
++    <mapping directory="$PROJECT_DIR$" vcs="Git" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/inspectionProfiles/Project_Default.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/inspectionProfiles/Project_Default.xml b/.idea/inspectionProfiles/Project_Default.xml
+new file mode 100644
+--- /dev/null	(date 1780993617970)
++++ b/.idea/inspectionProfiles/Project_Default.xml	(date 1780993617970)
+@@ -0,0 +1,61 @@
++<component name="InspectionProjectProfileManager">
++  <profile version="1.0">
++    <option name="myName" value="Project Default" />
++    <inspection_tool class="ComposePreviewDimensionRespectsLimit" enabled="true" level="WARNING" enabled_by_default="true">
++      <option name="composableFile" value="true" />
++      <option name="previewFile" value="true" />
++    </inspection_tool>
++    <inspection_tool class="ComposePreviewMustBeTopLevelFunction" enabled="true" level="ERROR" enabled_by_default="true">
++      <option name="composableFile" value="true" />
++      <option name="previewFile" value="true" />
++    </inspection_tool>
++    <inspection_tool class="ComposePreviewNeedsComposableAnnotation" enabled="true" level="ERROR" enabled_by_default="true">
++      <option name="composableFile" value="true" />
++      <option name="previewFile" value="true" />
++    </inspection_tool>
++    <inspection_tool class="ComposePreviewNotSupportedInUnitTestFiles" enabled="true" level="ERROR" enabled_by_default="true">
++      <option name="composableFile" value="true" />
++      <option name="previewFile" value="true" />
++    </inspection_tool>
++    <inspection_tool class="GlancePreviewDimensionRespectsLimit" enabled="true" level="WARNING" enabled_by_default="true">
++      <option name="composableFile" value="true" />
++    </inspection_tool>
++    <inspection_tool class="GlancePreviewMustBeTopLevelFunction" enabled="true" level="ERROR" enabled_by_default="true">
++      <option name="composableFile" value="true" />
++    </inspection_tool>
++    <inspection_tool class="GlancePreviewNeedsComposableAnnotation" enabled="true" level="ERROR" enabled_by_default="true">
++      <option name="composableFile" value="true" />
++    </inspection_tool>
++    <inspection_tool class="GlancePreviewNotSupportedInUnitTestFiles" enabled="true" level="ERROR" enabled_by_default="true">
++      <option name="composableFile" value="true" />
++    </inspection_tool>
++    <inspection_tool class="PreviewAnnotationInFunctionWithParameters" enabled="true" level="ERROR" enabled_by_default="true">
++      <option name="composableFile" value="true" />
++      <option name="previewFile" value="true" />
++    </inspection_tool>
++    <inspection_tool class="PreviewApiLevelMustBeValid" enabled="true" level="ERROR" enabled_by_default="true">
++      <option name="composableFile" value="true" />
++      <option name="previewFile" value="true" />
++    </inspection_tool>
++    <inspection_tool class="PreviewDeviceShouldUseNewSpec" enabled="true" level="WEAK WARNING" enabled_by_default="true">
++      <option name="composableFile" value="true" />
++      <option name="previewFile" value="true" />
++    </inspection_tool>
++    <inspection_tool class="PreviewFontScaleMustBeGreaterThanZero" enabled="true" level="ERROR" enabled_by_default="true">
++      <option name="composableFile" value="true" />
++      <option name="previewFile" value="true" />
++    </inspection_tool>
++    <inspection_tool class="PreviewMultipleParameterProviders" enabled="true" level="ERROR" enabled_by_default="true">
++      <option name="composableFile" value="true" />
++      <option name="previewFile" value="true" />
++    </inspection_tool>
++    <inspection_tool class="PreviewParameterProviderOnFirstParameter" enabled="true" level="ERROR" enabled_by_default="true">
++      <option name="composableFile" value="true" />
++      <option name="previewFile" value="true" />
++    </inspection_tool>
++    <inspection_tool class="PreviewPickerAnnotation" enabled="true" level="ERROR" enabled_by_default="true">
++      <option name="composableFile" value="true" />
++      <option name="previewFile" value="true" />
++    </inspection_tool>
++  </profile>
++</component>
+\ No newline at end of file
+Index: .idea/deploymentTargetSelector.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetSelector.xml b/.idea/deploymentTargetSelector.xml
+new file mode 100644
+--- /dev/null	(date 1780993624659)
++++ b/.idea/deploymentTargetSelector.xml	(date 1780993624659)
+@@ -0,0 +1,11 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="deploymentTargetSelector">
++    <selectionStates>
++      <SelectionState runConfigName="app">
++        <option name="selectionMode" value="DROPDOWN" />
++        <DialogSelection />
++      </SelectionState>
++    </selectionStates>
++  </component>
++</project>
+\ No newline at end of file
